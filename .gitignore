@@ -1,0 +1,32 @@
+# 图片与视频不纳入版本管理（SVG 等文本形式的图片除外）
+*.[Pp][Nn][Gg]
+*.[Jj][Pp][Gg]
+*.[Jj][Ee][Pp][Ee][Gg]
+*.[Gg][Ii][Ff]
+*.[Ww][Ee][Bb][Pp]
+*.[Bb][Mm][Pp]
+*.[Tt][Ii][Ff]
+*.[Tt][Ii][Ff][Ff]
+*.[Ii][Cc][Oo]
+*.[Hh][Ee][Ii][Cc]
+*.[Mm][Pp]4
+*.[Mm]4[Vv]
+*.[Mm][Oo][Vv]
+*.[Aa][Vv][Ii]
+*.[Mm][Kk][Vv]
+*.[Ww][Ee][Bb][Mm]
+*.[Ww][Mm][Vv]
+
+# 系统与临时噪声
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+.~lock.*#
+*.tmp
+*.crdownload
+
+# 密钥与凭据（不读取内容）
+.env
+.env.*
+.env/

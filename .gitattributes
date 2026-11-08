@@ -1,0 +1,11 @@
+* -text
+*.docx binary
+*.xlsx binary
+*.pptx binary
+*.pdf binary
+*.doc binary
+*.xls binary
+*.ppt binary
+*.odt binary
+*.ods binary
+*.odp binary
