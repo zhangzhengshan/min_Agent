@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "min-agent"
+version = "0.1.0"
+description = "从零实现的最小 Agent，不依赖 Agent 框架"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+# 统一测试命令：python -m pytest
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
