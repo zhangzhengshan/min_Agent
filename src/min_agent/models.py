@@ -71,14 +71,33 @@ def _as_optional_text(value: Any, field_name: str) -> str | None:
     return text or None
 
 
+def _as_tool_calls(value: Any, role: Role) -> tuple[ToolCall, ...]:
+    if value is None:
+        return ()
+    if not isinstance(value, (tuple, list)):
+        raise ValueError("tool_calls must be a sequence of ToolCall")
+    calls = tuple(value)
+    for call in calls:
+        if not isinstance(call, ToolCall):
+            raise ValueError("tool_calls must contain only ToolCall objects")
+    if calls and role is not Role.ASSISTANT:
+        raise ValueError("only assistant messages may carry tool_calls")
+    return calls
+
+
 @dataclass(frozen=True, slots=True)
 class Message:
-    """写入 Context 的一条消息。"""
+    """写入 Context 的一条消息。
+
+    assistant 消息可携带 ``tool_calls``，用于在历史中保留模型发起过的工具调用；
+    tool 消息通过 ``tool_call_id`` 与之对应。工具调用和结果成对出现，不存半轮。
+    """
 
     role: Role
     content: str
     name: str | None = None
     tool_call_id: str | None = None
+    tool_calls: tuple[ToolCall, ...] = ()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "role", _as_enum(self.role, Role, "role"))
@@ -90,6 +109,9 @@ class Message:
                 raise ValueError("tool message requires a non-empty tool_call_id")
         elif self.tool_call_id is not None:
             raise ValueError("only tool messages may carry tool_call_id")
+        object.__setattr__(
+            self, "tool_calls", _as_tool_calls(self.tool_calls, self.role)
+        )
 
 
 @dataclass(frozen=True, slots=True)

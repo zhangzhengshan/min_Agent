@@ -56,6 +56,29 @@ def test_message_requires_string_content() -> None:
         Message(role=Role.USER, content=None)  # type: ignore[arg-type]
 
 
+def test_assistant_message_can_carry_normalized_tool_calls() -> None:
+    call = make_call()
+    message = Message(
+        role=Role.ASSISTANT,
+        content="",
+        tool_calls=[call],  # type: ignore[arg-type]
+    )
+
+    assert message.tool_calls == (call,)
+    assert isinstance(message.tool_calls, tuple)
+
+
+def test_only_assistant_messages_may_carry_tool_calls() -> None:
+    with pytest.raises(ValueError, match="assistant"):
+        Message(role=Role.USER, content="hi", tool_calls=(make_call(),))
+
+
+@pytest.mark.parametrize("tool_calls", ["not-a-sequence", (object(),)])
+def test_message_rejects_invalid_tool_calls(tool_calls) -> None:
+    with pytest.raises(ValueError, match="tool_calls"):
+        Message(role=Role.ASSISTANT, content="", tool_calls=tool_calls)
+
+
 def test_tool_call_normalizes_name_and_copies_arguments() -> None:
     arguments = {"query": "pytest"}
     call = ToolCall(call_id="call-1", name="  search  ", arguments=arguments)
