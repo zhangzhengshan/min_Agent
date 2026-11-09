@@ -1,0 +1,398 @@
+{
+  "timestamp": "2026-11-09T04:22:23.334176+00:00",
+  "base_url": "https://api.deepseek.com",
+  "model": "deepseek-chat",
+  "passed": true,
+  "cases": [
+    {
+      "case": "greeting",
+      "ok": true,
+      "session_id": "smoke-greeting",
+      "turns": [
+        {
+          "input": "你好，请用一句话介绍你自己。",
+          "ok": true,
+          "recorded": true,
+          "answer": "你好！我是一个最小可用的智能体，能直接回答问题，也能调用计算、搜索和待办工具来帮你获取信息或管理任务。",
+          "error": null,
+          "tools": []
+        }
+      ]
+    },
+    {
+      "case": "calculator",
+      "ok": true,
+      "session_id": "smoke-calculator",
+      "turns": [
+        {
+          "input": "请计算 123*45，必须使用 calculator 工具得到精确结果。",
+          "ok": true,
+          "recorded": true,
+          "answer": "123 × 45 = 5535",
+          "error": null,
+          "tools": [
+            {
+              "name": "calculator",
+              "arguments": {
+                "expression": "123*45"
+              },
+              "ok": true,
+              "output": {
+                "expression": "123*45",
+                "result": 5535
+              },
+              "error": null,
+              "thought_summary": "用户要求用 calculator 精确计算 123*45"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "search",
+      "ok": true,
+      "session_id": "smoke-search",
+      "turns": [
+        {
+          "input": "请使用 search 工具搜索关键词「杭州天气」，并告诉我搜索结果。",
+          "ok": true,
+          "recorded": true,
+          "answer": "搜索「杭州天气」共返回 2 条结果（来自本地模拟资料库）：\n\n1. 杭州天气预报 — 杭州未来三天以多云为主，气温 18-26°C，早晚温差较大。（https://mock.local/weather/hangzhou）\n2. 杭州出行提示 — 周末西湖景区人流较多，建议错峰出行并携带雨具。（https://mock.local/travel/hangzhou）\n\n注意：这是模拟数据，非实时天气，实际出行请以官方气象信息为准。",
+          "error": null,
+          "tools": [
+            {
+              "name": "search",
+              "arguments": {
+                "query": "杭州天气"
+              },
+              "ok": true,
+              "output": {
+                "query": "杭州天气",
+                "results": [
+                  {
+                    "title": "杭州天气预报",
+                    "snippet": "杭州未来三天以多云为主，气温 18-26°C，早晚温差较大。",
+                    "url": "https://mock.local/weather/hangzhou"
+                  },
+                  {
+                    "title": "杭州出行提示",
+                    "snippet": "周末西湖景区人流较多，建议错峰出行并携带雨具。",
+                    "url": "https://mock.local/travel/hangzhou"
+                  }
+                ],
+                "total": 2,
+                "returned": 2,
+                "source": "mock"
+              },
+              "error": null,
+              "thought_summary": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "todo",
+      "ok": true,
+      "session_id": "smoke-todo",
+      "turns": [
+        {
+          "input": "请使用 todo 工具新增一条待办：提交 P5 测试报告。",
+          "ok": true,
+          "recorded": true,
+          "answer": "已新增待办（id=1）：提交 P5 测试报告，当前未完成。",
+          "error": null,
+          "tools": [
+            {
+              "name": "todo",
+              "arguments": {
+                "action": "add",
+                "text": "提交 P5 测试报告"
+              },
+              "ok": true,
+              "output": {
+                "action": "add",
+                "item": {
+                  "id": 1,
+                  "text": "提交 P5 测试报告",
+                  "done": false
+                },
+                "total": 1
+              },
+              "error": null,
+              "thought_summary": "用户明确要求新增待办，调用 todo add。"
+            }
+          ]
+        },
+        {
+          "input": "请使用 todo 工具列出我的全部待办。",
+          "ok": true,
+          "recorded": true,
+          "answer": "你的待办共 1 条：\n1. [未完成] 提交 P5 测试报告（id=1）",
+          "error": null,
+          "tools": [
+            {
+              "name": "todo",
+              "arguments": {
+                "action": "list"
+              },
+              "ok": true,
+              "output": {
+                "action": "list",
+                "items": [
+                  {
+                    "id": 1,
+                    "text": "提交 P5 测试报告",
+                    "done": false
+                  }
+                ],
+                "total": 1
+              },
+              "error": null,
+              "thought_summary": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "multi_tool_final",
+      "ok": true,
+      "session_id": "smoke-multi-tool",
+      "turns": [
+        {
+          "input": "先用 search 工具查杭州天气，再用 calculator 计算 18*2，最后用一句中文同时总结天气和计算结果。",
+          "ok": true,
+          "recorded": true,
+          "answer": "杭州未来三天以多云为主、气温18-26°C，而18*2的计算结果是36。",
+          "error": null,
+          "tools": [
+            {
+              "name": "search",
+              "arguments": {
+                "query": "杭州天气"
+              },
+              "ok": true,
+              "output": {
+                "query": "杭州天气",
+                "results": [
+                  {
+                    "title": "杭州天气预报",
+                    "snippet": "杭州未来三天以多云为主，气温 18-26°C，早晚温差较大。",
+                    "url": "https://mock.local/weather/hangzhou"
+                  },
+                  {
+                    "title": "杭州出行提示",
+                    "snippet": "周末西湖景区人流较多，建议错峰出行并携带雨具。",
+                    "url": "https://mock.local/travel/hangzhou"
+                  }
+                ],
+                "total": 2,
+                "returned": 2,
+                "source": "mock"
+              },
+              "error": null,
+              "thought_summary": "先查询杭州天气，下一步再计算"
+            },
+            {
+              "name": "calculator",
+              "arguments": {
+                "expression": "18*2"
+              },
+              "ok": true,
+              "output": {
+                "expression": "18*2",
+                "result": 36
+              },
+              "error": null,
+              "thought_summary": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "dual_session",
+      "ok": true,
+      "sessions": {
+        "window-1": {
+          "turns": [
+            {
+              "input": "先用 search 查询「杭州天气」，再用 todo 记一条待办：带伞。",
+              "ok": true,
+              "recorded": true,
+              "answer": "杭州天气：未来三天以多云为主，气温 18-26°C，早晚温差较大；出行提示建议携带雨具、错峰游览西湖。\n待办已添加：带伞（id 1，未完成）。",
+              "error": null,
+              "tools": [
+                {
+                  "name": "search",
+                  "arguments": {
+                    "query": "杭州天气"
+                  },
+                  "ok": true,
+                  "output": {
+                    "query": "杭州天气",
+                    "results": [
+                      {
+                        "title": "杭州天气预报",
+                        "snippet": "杭州未来三天以多云为主，气温 18-26°C，早晚温差较大。",
+                        "url": "https://mock.local/weather/hangzhou"
+                      },
+                      {
+                        "title": "杭州出行提示",
+                        "snippet": "周末西湖景区人流较多，建议错峰出行并携带雨具。",
+                        "url": "https://mock.local/travel/hangzhou"
+                      }
+                    ],
+                    "total": 2,
+                    "returned": 2,
+                    "source": "mock"
+                  },
+                  "error": null,
+                  "thought_summary": "先查询杭州天气，待办下一步再记"
+                },
+                {
+                  "name": "todo",
+                  "arguments": {
+                    "action": "add",
+                    "text": "带伞"
+                  },
+                  "ok": true,
+                  "output": {
+                    "action": "add",
+                    "item": {
+                      "id": 1,
+                      "text": "带伞",
+                      "done": false
+                    },
+                    "total": 1
+                  },
+                  "error": null,
+                  "thought_summary": null
+                }
+              ]
+            },
+            {
+              "input": "我的待办有哪些？杭州天气怎么样？",
+              "ok": true,
+              "recorded": true,
+              "answer": "待办共 1 条：\n- id 1：带伞（未完成）\n\n杭州天气：未来三天以多云为主，气温 18-26°C，早晚温差较大；出行提示建议携带雨具、错峰游览西湖。",
+              "error": null,
+              "tools": [
+                {
+                  "name": "todo",
+                  "arguments": {
+                    "action": "list"
+                  },
+                  "ok": true,
+                  "output": {
+                    "action": "list",
+                    "items": [
+                      {
+                        "id": 1,
+                        "text": "带伞",
+                        "done": false
+                      }
+                    ],
+                    "total": 1
+                  },
+                  "error": null,
+                  "thought_summary": null
+                }
+              ]
+            }
+          ],
+          "todo": [
+            "带伞"
+          ]
+        },
+        "window-2": {
+          "turns": [
+            {
+              "input": "先用 search 查询「周报模板」，再用 todo 记一条待办：写周报。",
+              "ok": true,
+              "recorded": true,
+              "answer": "已完成：\n\n1. 搜索「周报模板」结果（1 条）：\n- 团队周报模板（https://mock.local/templates/weekly-report）：周报包含本周完成、下周计划、风险与需要的支持四部分。\n\n2. 待办已添加：id 1「写周报」（未完成，当前共 1 条）。",
+              "error": null,
+              "tools": [
+                {
+                  "name": "search",
+                  "arguments": {
+                    "query": "周报模板"
+                  },
+                  "ok": true,
+                  "output": {
+                    "query": "周报模板",
+                    "results": [
+                      {
+                        "title": "团队周报模板",
+                        "snippet": "周报包含本周完成、下周计划、风险与需要的支持四部分。",
+                        "url": "https://mock.local/templates/weekly-report"
+                      }
+                    ],
+                    "total": 1,
+                    "returned": 1,
+                    "source": "mock"
+                  },
+                  "error": null,
+                  "thought_summary": "{\"kind\": \"tool_call\", \"thought_summary\": \"先搜索周报模板\", \"tool_call\": {\"name\": \"search\", \"arguments\": {\"query\": \"周报模板\"}}}"
+                },
+                {
+                  "name": "todo",
+                  "arguments": {
+                    "action": "add",
+                    "text": "写周报"
+                  },
+                  "ok": true,
+                  "output": {
+                    "action": "add",
+                    "item": {
+                      "id": 1,
+                      "text": "写周报",
+                      "done": false
+                    },
+                    "total": 1
+                  },
+                  "error": null,
+                  "thought_summary": null
+                }
+              ]
+            },
+            {
+              "input": "我的待办有哪些？",
+              "ok": true,
+              "recorded": true,
+              "answer": "你当前有 1 条待办：\n- id 1：写周报（未完成）",
+              "error": null,
+              "tools": [
+                {
+                  "name": "todo",
+                  "arguments": {
+                    "action": "list"
+                  },
+                  "ok": true,
+                  "output": {
+                    "action": "list",
+                    "items": [
+                      {
+                        "id": 1,
+                        "text": "写周报",
+                        "done": false
+                      }
+                    ],
+                    "total": 1
+                  },
+                  "error": null,
+                  "thought_summary": null
+                }
+              ]
+            }
+          ],
+          "todo": [
+            "写周报"
+          ]
+        }
+      }
+    }
+  ]
+}

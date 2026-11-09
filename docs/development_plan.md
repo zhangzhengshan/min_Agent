@@ -156,14 +156,16 @@
 
 ### P5：完整测试与最终验收
 
+**状态**：已完成（2026-11-09）。实现/测试：`tests/test_integration.py`（4 项端到端用例：双 Session 天气+待办/周报+待办、纯对话追问、工具结果追问、压缩追问）、`tests/conftest.py`（全量测试清空真实 LLM 配置并拦截 socket）、`scripts/smoke_agent.py`（真实接口六组用例）。全量 `python -m pytest` 319 项通过（P4 315 项 + P5 4 项）。真实冒烟使用 DeepSeek `deepseek-chat`，6 组用例全部通过，结果见 `experiments/2026-11-09-p5-final-smoke.json`，trace 见 `experiments/2026-11-09-p5-final-smoke-trace.jsonl`（12 条工具 trace，覆盖两个 Session，已确认不含密钥）。说明：当前 `deepseek-flash` 处于思考模式，会要求后续请求回传 `reasoning_content`；本项目按约定不保存模型隐藏推理链，因此最终冒烟改用 `deepseek-chat`，命令为 `MIN_AGENT_LLM_MODEL=deepseek-chat python scripts/smoke_agent.py`。
+
 **TODO**
 
-- [ ] 补齐单元测试和端到端集成测试，测试文件按被测模块命名；不追求与核心要求无关的覆盖率数字。
-- [ ] 使用 Mock LLM 和 Mock Search 跑完全部自动化测试，确保无网络、无 API Key 时结果稳定。
-- [ ] 使用真实 LLM 做最终冒烟：直接回复、调用 `calculator`、调用 Mock `search`、调用 `todo`、根据工具结果生成最终答案。
-- [ ] 执行双 Session 场景：`window-1` 查询模拟天气并记待办，`window-2` 写周报并记待办，随后分别切回并追问待办和前文内容。
-- [ ] 分别验证纯对话追问、基于工具结果的追问、超最大轮次后的压缩追问。
-- [ ] 对照下方硬性要求矩阵逐项验收；任何一项失败，都不能把本期标记为完成。
+- [x] 补齐单元测试和端到端集成测试，测试文件按被测模块命名；不追求与核心要求无关的覆盖率数字。
+- [x] 使用 Mock LLM 和 Mock Search 跑完全部自动化测试，确保无网络、无 API Key 时结果稳定。
+- [x] 使用真实 LLM 做最终冒烟：直接回复、调用 `calculator`、调用 Mock `search`、调用 `todo`、根据工具结果生成最终答案。
+- [x] 执行双 Session 场景：`window-1` 查询模拟天气并记待办，`window-2` 写周报并记待办，随后分别切回并追问待办和前文内容。
+- [x] 分别验证纯对话追问、基于工具结果的追问、超最大轮次后的压缩追问。
+- [x] 对照下方硬性要求矩阵逐项验收；任何一项失败，都不能把本期标记为完成。
 
 **最终交付物**
 
@@ -173,11 +175,11 @@
 
 **验收标准**
 
-- [ ] 全部自动化测试通过，真实接口冒烟通过；若因缺少凭据未执行真实冒烟，必须明确标记“尚未完整验收”。
-- [ ] 双 Session 场景中，`window-1` 只出现天气相关待办，`window-2` 只出现周报相关待办，切回后均能续聊。
-- [ ] 纯对话追问能引用本 Session 前文；带工具追问能引用先前工具结果并继续调用工具。
-- [ ] 超限对话产生滚动摘要，近期完整轮次和关键历史状态仍可用于追问。
-- [ ] 下方硬性要求矩阵全部有对应交付物和通过的验收用例。
+- [x] 全部自动化测试通过，真实接口冒烟通过；若因缺少凭据未执行真实冒烟，必须明确标记“尚未完整验收”。
+- [x] 双 Session 场景中，`window-1` 只出现天气相关待办，`window-2` 只出现周报相关待办，切回后均能续聊。
+- [x] 纯对话追问能引用本 Session 前文；带工具追问能引用先前工具结果并继续调用工具。
+- [x] 超限对话产生滚动摘要，近期完整轮次和关键历史状态仍可用于追问。
+- [x] 下方硬性要求矩阵全部有对应交付物和通过的验收用例。
 
 ## 4. 硬性要求验收映射
 
@@ -198,6 +200,12 @@
 | 工具调用 trace 或执行日志 | P4、P5 | 成功与失败日志断言，含 Session、轮次、参数、状态和耗时 |
 | 构建覆盖以上功能的测试用例 | P0 至 P5 | 自动化测试全通过，真实接口冒烟单独有记录 |
 
+**P5 实测证据（2026-11-09）**
+
+- `python -m pytest`：319 项全部通过；`tests/conftest.py` 在每个用例前清空真实 LLM 配置并拦截 socket 建连，证明结果不依赖网络或 API Key。
+- `tests/test_integration.py`：覆盖双 Session 天气+待办/周报+待办、纯对话追问、基于工具结果的追问与再次调用工具、超最大轮次后的压缩追问；同时断言三个工具 Schema、Session 上下文隔离和成功工具 trace 的 `session_id`/`turn_id`/序号。失败工具 trace 由 `tests/test_loop.py` 的参数化用例覆盖。
+- `MIN_AGENT_LLM_MODEL=deepseek-chat python scripts/smoke_agent.py`：6 组用例全部通过（直接回复、`calculator`、Mock `search`、`todo`、多工具结果汇总、双 Session）；报告 `experiments/2026-11-09-p5-final-smoke.json`，trace `experiments/2026-11-09-p5-final-smoke-trace.jsonl`。
+
 ## 5. 完成定义
 
 只有同时满足以下条件，最小可用 Agent 才算完成：
@@ -206,3 +214,5 @@
 2. 双 Session、两类追问、最大轮次、基础压缩、异常处理和 trace 均有可重复验证的证据。
 3. 自动化测试全部通过，真实 LLM 自主决策冒烟通过。
 4. 未通过新增框架、关键词伪路由或额外产品功能来规避任何硬性要求。
+
+**验收结论（2026-11-09）**：以上条件全部满足，本期完成。
