@@ -76,27 +76,29 @@
 
 ### P2：工具注册、执行与三个必备工具
 
+**状态**：已完成（2026-11-09）。实现：`src/min_agent/tools.py`（Tool Registry、Tool Executor、JSON Schema 子集校验）、`src/min_agent/builtin_tools.py`（三个工具与默认注册表）；测试：`tests/test_tools.py`、`tests/test_builtin_tools.py`。
+
 **TODO**
 
-- [ ] 实现 Tool Registry：注册工具名称、描述、参数 JSON Schema 和处理函数；支持列出供 LLM 使用的 Schema。
-- [ ] 实现 Tool Executor：按名称查找工具、校验参数、执行处理函数、返回统一工具结果；拒绝未注册工具和重复注册。
-- [ ] 实现 `calculator`：支持基础算术，非法表达式和除零返回结构化错误，禁止直接使用 `eval`。
-- [ ] 实现 Mock `search`：根据查询返回稳定、可断言的模拟结果，不访问真实搜索服务。
-- [ ] 实现 `todo`：至少支持 `add`、`list`、`complete`，数据按 `session_id` 隔离；完成不存在的待办时返回明确错误。
+- [x] 实现 Tool Registry：注册工具名称、描述、参数 JSON Schema 和处理函数；支持列出供 LLM 使用的 Schema。
+- [x] 实现 Tool Executor：按名称查找工具、校验参数、执行处理函数、返回统一工具结果；拒绝未注册工具和重复注册。
+- [x] 实现 `calculator`：支持基础算术，非法表达式和除零返回结构化错误，禁止直接使用 `eval`。
+- [x] 实现 Mock `search`：根据查询返回稳定、可断言的模拟结果，不访问真实搜索服务。
+- [x] 实现 `todo`：至少支持 `add`、`list`、`complete`，数据按 `session_id` 隔离；完成不存在的待办时返回明确错误。
 
 **交给 P3 的交付物**
 
-- `tools.py`、三个工具实现及对应测试。
+- `tools.py`（注册与执行）、`builtin_tools.py`（三个工具实现）及对应测试。
 - 可直接提供给模型提示或工具调用的 Schema 列表，以及统一的工具执行接口。
 
 **验收标准**
 
-- [ ] Registry 中同时存在 `calculator`、`search`、`todo`，每个工具都有非空名称、描述和参数 Schema。
-- [ ] LLM 请求构造器能够读取这三个工具的 Schema；后续集成测试不得通过关键词规则代替模型选择。
-- [ ] `calculator` 正确计算合法表达式，非法表达式、错误参数和除零均有可断言结果。
-- [ ] Mock `search` 对固定查询返回固定结果，测试全程无外部网络依赖。
-- [ ] `todo` 能新增、列出和完成待办；`window-1` 的待办不会在 `window-2` 中出现。
-- [ ] 未知工具、重复注册、参数缺失、参数类型错误和工具内部异常均被捕获并转为统一结果。
+- [x] Registry 中同时存在 `calculator`、`search`、`todo`，每个工具都有非空名称、描述和参数 Schema。
+- [x] LLM 请求构造器能够读取这三个工具的 Schema；后续集成测试不得通过关键词规则代替模型选择。（P2 提供 `ToolRegistry.schemas()`，测试已验证三个 Schema 可序列化；P3 请求构造器直接消费。）
+- [x] `calculator` 正确计算合法表达式，非法表达式、错误参数和除零均有可断言结果。
+- [x] Mock `search` 对固定查询返回固定结果，测试全程无外部网络依赖。
+- [x] `todo` 能新增、列出和完成待办；`window-1` 的待办不会在 `window-2` 中出现。
+- [x] 未知工具、重复注册、参数缺失、参数类型错误和工具内部异常均被捕获并转为统一结果。
 
 ### P3：LLM 接入、Schema 提示与输出解析
 

@@ -1,5 +1,11 @@
-"""min_agent：从零实现的最小 Agent 运行时（P1 包含数据契约、Session 与 Context）。"""
+"""min_agent：从零实现的最小 Agent 运行时（P2 包含数据契约、Session、Context 与工具）。"""
 
+from .builtin_tools import (
+    calculator_tool,
+    create_default_registry,
+    search_tool,
+    todo_tool,
+)
 from .context import build_context, tool_result_content, turn_to_messages
 from .errors import (
     AgentError,
@@ -35,6 +41,13 @@ from .session import (
     SessionManager,
     Summarizer,
 )
+from .tools import (
+    ToolContext,
+    ToolExecutor,
+    ToolRegistry,
+    ToolSpec,
+    validate_arguments,
+)
 
 __version__ = "0.1.0"
 
@@ -60,14 +73,23 @@ __all__ = [
     "Summarizer",
     "ToolArgumentError",
     "ToolCall",
+    "ToolContext",
     "ToolExchange",
     "ToolExecutionError",
+    "ToolExecutor",
     "ToolLimitError",
     "ToolNotFoundError",
+    "ToolRegistry",
     "ToolResult",
+    "ToolSpec",
     "Turn",
     "TurnStatus",
     "build_context",
+    "calculator_tool",
+    "create_default_registry",
+    "search_tool",
+    "todo_tool",
     "tool_result_content",
     "turn_to_messages",
+    "validate_arguments",
 ]
