@@ -1,4 +1,4 @@
-"""min_agent：从零实现的最小 Agent 运行时（P2 包含数据契约、Session、Context 与工具）。"""
+"""min_agent：从零实现的最小 Agent 运行时（P3 包含数据契约、Session、Context、工具与 LLM 接入）。"""
 
 from .builtin_tools import (
     calculator_tool,
@@ -22,6 +22,18 @@ from .errors import (
     ToolLimitError,
     ToolNotFoundError,
 )
+from .llm import (
+    LLMClient,
+    LLMConfig,
+    LLMRequest,
+    LLMSummarizer,
+    MockLLMClient,
+    OpenAICompatibleClient,
+    SUMMARY_SYSTEM_PROMPT,
+    build_model_request,
+    compose_system_prompt,
+    load_env_file,
+)
 from .models import (
     DecisionKind,
     Message,
@@ -33,6 +45,7 @@ from .models import (
     Turn,
     TurnStatus,
 )
+from .parser import DECISION_KINDS, parse_decision
 from .session import (
     DEFAULT_MAX_TURNS,
     DEFAULT_RECENT_TURNS,
@@ -57,15 +70,23 @@ __all__ = [
     "DEFAULT_MAX_TURNS",
     "DEFAULT_RECENT_TURNS",
     "DEFAULT_SYSTEM_PROMPT",
+    "DECISION_KINDS",
     "DecisionKind",
     "DuplicateToolError",
     "ErrorCode",
     "ErrorInfo",
+    "LLMClient",
+    "LLMConfig",
+    "LLMRequest",
+    "LLMSummarizer",
     "Message",
+    "MockLLMClient",
     "ModelDecision",
     "ModelError",
+    "OpenAICompatibleClient",
     "ParseError",
     "Role",
+    "SUMMARY_SYSTEM_PROMPT",
     "Session",
     "SessionManager",
     "SessionNotFoundError",
@@ -85,8 +106,12 @@ __all__ = [
     "Turn",
     "TurnStatus",
     "build_context",
+    "build_model_request",
     "calculator_tool",
+    "compose_system_prompt",
     "create_default_registry",
+    "load_env_file",
+    "parse_decision",
     "search_tool",
     "todo_tool",
     "tool_result_content",

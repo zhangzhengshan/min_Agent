@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-11-09T04:05:36.860809+00:00",
+  "base_url": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "passed": true,
+  "cases": [
+    {
+      "case": "greeting",
+      "input": "你好，请用一句话介绍你自己。",
+      "ok": true,
+      "raw_response": "{\"kind\": \"final\", \"thought_summary\": \"用户要求简单自我介绍，无需调用工具。\", \"answer\": \"你好，我是一个最小可用的智能体，可以回答问题、做计算、搜索本地资料库，并帮你管理待办事项。\"}",
+      "kind": "final",
+      "thought_summary": "用户要求简单自我介绍，无需调用工具。",
+      "answer": "你好，我是一个最小可用的智能体，可以回答问题、做计算、搜索本地资料库，并帮你管理待办事项。"
+    },
+    {
+      "case": "calculator",
+      "input": "请计算 123*45，并使用工具得到精确结果。",
+      "ok": true,
+      "raw_response": "{\"kind\": \"tool_call\", \"tool_call\": {\"name\": \"calculator\", \"arguments\": {\"expression\": \"123*45\"}, \"call_id\": \"call_00_ET_cKHiOKg0Ki3jkaCPj3SS4165\"}}",
+      "kind": "tool_call",
+      "thought_summary": null,
+      "tool_call": {
+        "call_id": "call_00_ET_cKHiOKg0Ki3jkaCPj3SS4165",
+        "name": "calculator",
+        "arguments": {
+          "expression": "123*45"
+        }
+      },
+      "tool_result": {
+        "call_id": "call_00_ET_cKHiOKg0Ki3jkaCPj3SS4165",
+        "name": "calculator",
+        "ok": true,
+        "output": {
+          "expression": "123*45",
+          "result": 5535
+        },
+        "error": null
+      }
+    }
+  ]
+}

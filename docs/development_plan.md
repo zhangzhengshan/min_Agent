@@ -102,14 +102,16 @@
 
 ### P3：LLM 接入、Schema 提示与输出解析
 
+**状态**：已完成（2026-11-09）。实现：`src/min_agent/llm.py`（请求构造、配置与环境文件加载、真实/Mock 客户端、LLM 摘要器）、`src/min_agent/parser.py`（严格决策解析）；测试：`tests/test_llm.py`、`tests/test_parser.py`；冒烟脚本：`scripts/smoke_llm.py`。真实冒烟已通过：DeepSeek `deepseek-flash`，问候返回 `final`，计算请求选择 `calculator` 并得到 5535，结果见 `experiments/2026-11-09-llm-smoke.json`。本地凭据保存在已忽略的 `.env`，未写入代码、测试或日志。
+
 **TODO**
 
-- [ ] 定义最小 `LLMClient` 接口，实现一个可配置的真实模型适配器和一个可按脚本返回响应的 `MockLLMClient`。
-- [ ] 构造模型请求时传入当前 Context，以及 Registry 中三个工具的名称、描述和参数 Schema。
-- [ ] 实现严格输出解析：提取 `thought_summary`，并识别一个 `tool_call`（工具名和参数）或一个 `final`（最终答案）；一次响应只执行一个决策。
-- [ ] 对空响应、非法 JSON、缺少必需字段、未知决策类型和工具参数不符合 Schema 返回可处理的解析或校验错误。
-- [ ] 将 P1 的摘要器接入同一 LLMClient；Mock 测试不调用真实接口。
-- [ ] 真实接口的地址、模型名和密钥通过配置注入，密钥不写入代码、测试或日志。
+- [x] 定义最小 `LLMClient` 接口，实现一个可配置的真实模型适配器和一个可按脚本返回响应的 `MockLLMClient`。
+- [x] 构造模型请求时传入当前 Context，以及 Registry 中三个工具的名称、描述和参数 Schema。
+- [x] 实现严格输出解析：提取 `thought_summary`，并识别一个 `tool_call`（工具名和参数）或一个 `final`（最终答案）；一次响应只执行一个决策。
+- [x] 对空响应、非法 JSON、缺少必需字段、未知决策类型和工具参数不符合 Schema 返回可处理的解析或校验错误。
+- [x] 将 P1 的摘要器接入同一 LLMClient；Mock 测试不调用真实接口。
+- [x] 真实接口的地址、模型名和密钥通过配置注入，密钥不写入代码、测试或日志。
 
 **交给 P4 的交付物**
 
@@ -118,10 +120,10 @@
 
 **验收标准**
 
-- [ ] Mock 返回直接答案时，解析器得到 `final` 和答案；返回工具调用时，得到工具名、参数及 `thought_summary`。
-- [ ] 非法 JSON、缺字段、未知类型和 Schema 不匹配均返回明确错误，不把 malformed 输出当成最终答案。
-- [ ] 请求构造测试中可断言三个工具 Schema 均已提供给 LLM，且包含当前 Session 的 Context。
-- [ ] 使用真实模型做基础冒烟：明确问候可直接回复，明确计算请求能选择 `calculator`；该结果单独记录，不用 Mock 结果替代。
+- [x] Mock 返回直接答案时，解析器得到 `final` 和答案；返回工具调用时，得到工具名、参数及 `thought_summary`。
+- [x] 非法 JSON、缺字段、未知类型和 Schema 不匹配均返回明确错误，不把 malformed 输出当成最终答案。
+- [x] 请求构造测试中可断言三个工具 Schema 均已提供给 LLM，且包含当前 Session 的 Context。
+- [x] 使用真实模型做基础冒烟：明确问候可直接回复，明确计算请求能选择 `calculator`；该结果单独记录，不用 Mock 结果替代。执行方式：在 `.env` 或环境变量中设置 `MIN_AGENT_LLM_BASE_URL`、`MIN_AGENT_LLM_MODEL`、`MIN_AGENT_LLM_API_KEY` 后运行 `python scripts/smoke_llm.py`，结果写入 `experiments/YYYY-MM-DD-llm-smoke.json`。2026-11-09 已用 DeepSeek `deepseek-flash` 通过。
 
 ### P4：核心 Loop、异常处理、Trace 与 CLI
 

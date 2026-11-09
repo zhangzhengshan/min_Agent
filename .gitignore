@@ -26,6 +26,11 @@ desktop.ini
 *.tmp
 *.crdownload
 
+# Python 缓存
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
 # 密钥与凭据（不读取内容）
 .env
 .env.*
