@@ -1,0 +1,1 @@
+{"arguments": {"expression": "123*45"}, "call_id": "call_00_ET_j2mVh9rB8LUJB8BzmiUD1260", "duration_ms": 0, "error": null, "ok": true, "sequence": 1, "session_id": "smoke-p4", "status": "success", "timestamp": "2026-11-09T04:14:22.805988+00:00", "tool": "calculator", "turn_id": "ddfd6b227adf4aba93ae3bc037f6b821"}

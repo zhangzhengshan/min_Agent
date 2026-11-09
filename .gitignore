@@ -31,6 +31,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
+# 运行时日志与 trace（由 CLI 生成）
+logs/
+
 # 密钥与凭据（不读取内容）
 .env
 .env.*

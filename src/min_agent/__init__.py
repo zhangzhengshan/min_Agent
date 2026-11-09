@@ -1,4 +1,4 @@
-"""min_agent：从零实现的最小 Agent 运行时（P3 包含数据契约、Session、Context、工具与 LLM 接入）。"""
+"""min_agent：从零实现的最小 Agent 运行时（含 Loop、工具、Session、Context、CLI）。"""
 
 from .builtin_tools import (
     calculator_tool,
@@ -6,7 +6,14 @@ from .builtin_tools import (
     search_tool,
     todo_tool,
 )
-from .context import build_context, tool_result_content, turn_to_messages
+from .cli import AgentCLI
+from .context import (
+    build_context,
+    build_turn_context,
+    exchange_to_messages,
+    tool_result_content,
+    turn_to_messages,
+)
 from .errors import (
     AgentError,
     ConfigError,
@@ -31,8 +38,15 @@ from .llm import (
     OpenAICompatibleClient,
     SUMMARY_SYSTEM_PROMPT,
     build_model_request,
+    build_turn_request,
     compose_system_prompt,
     load_env_file,
+)
+from .loop import (
+    AgentLoop,
+    DEFAULT_MALFORMED_RETRIES,
+    DEFAULT_MAX_TOOL_CALLS,
+    LoopResult,
 )
 from .models import (
     DecisionKind,
@@ -61,12 +75,23 @@ from .tools import (
     ToolSpec,
     validate_arguments,
 )
+from .trace import (
+    JsonlTraceSink,
+    MemoryTraceSink,
+    NullTraceSink,
+    ToolTrace,
+    TraceSink,
+)
 
 __version__ = "0.1.0"
 
 __all__ = [
+    "AgentCLI",
     "AgentError",
+    "AgentLoop",
     "ConfigError",
+    "DEFAULT_MALFORMED_RETRIES",
+    "DEFAULT_MAX_TOOL_CALLS",
     "DEFAULT_MAX_TURNS",
     "DEFAULT_RECENT_TURNS",
     "DEFAULT_SYSTEM_PROMPT",
@@ -75,14 +100,18 @@ __all__ = [
     "DuplicateToolError",
     "ErrorCode",
     "ErrorInfo",
+    "JsonlTraceSink",
     "LLMClient",
     "LLMConfig",
     "LLMRequest",
     "LLMSummarizer",
+    "LoopResult",
+    "MemoryTraceSink",
     "Message",
     "MockLLMClient",
     "ModelDecision",
     "ModelError",
+    "NullTraceSink",
     "OpenAICompatibleClient",
     "ParseError",
     "Role",
@@ -103,13 +132,18 @@ __all__ = [
     "ToolRegistry",
     "ToolResult",
     "ToolSpec",
+    "ToolTrace",
+    "TraceSink",
     "Turn",
     "TurnStatus",
     "build_context",
     "build_model_request",
+    "build_turn_context",
+    "build_turn_request",
     "calculator_tool",
     "compose_system_prompt",
     "create_default_registry",
+    "exchange_to_messages",
     "load_env_file",
     "parse_decision",
     "search_tool",

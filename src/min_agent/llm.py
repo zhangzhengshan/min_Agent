@@ -4,6 +4,7 @@
 
 - ``LLMRequest``：一次模型请求的内部格式，包含当前 Context 消息和三个工具 Schema；
 - ``build_model_request``：把 Session 历史、当前输入、系统指令和工具能力组装成请求；
+- ``build_turn_request``：P4 Loop 使用，在历史之后追加进行中轮次及工具结果；
 - ``LLMClient``：最小客户端协议，只有一个 ``complete(request) -> str`` 方法；
 - ``OpenAICompatibleClient``：真实模型适配器，使用标准库 HTTP，密钥只从配置注入；
 - ``MockLLMClient``：按脚本返回响应，测试全程不访问网络；
@@ -27,7 +28,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
-from .context import build_context, tool_result_content
+from .context import build_context, build_turn_context, tool_result_content
 from .errors import (
     AgentError,
     ConfigError,
@@ -231,6 +232,32 @@ def build_model_request(
         session,
         user_input,
         system_prompt=compose_system_prompt(system_prompt, schemas),
+    )
+    return LLMRequest(messages=tuple(messages), tools=tuple(schemas))
+
+
+def build_turn_request(
+    session: Session,
+    turn: Turn,
+    registry: ToolRegistry,
+    *,
+    system_prompt: str = DEFAULT_SYSTEM_PROMPT,
+    notices: Sequence[str] = (),
+) -> LLMRequest:
+    """组装一次轮次内模型请求：历史 + 当前轮次已产生的工具调用/结果。"""
+    if not isinstance(session, Session):
+        raise ValueError("session must be a Session")
+    if not isinstance(turn, Turn):
+        raise ValueError("turn must be a Turn")
+    if not isinstance(registry, ToolRegistry):
+        raise ValueError("registry must be a ToolRegistry")
+
+    schemas = registry.schemas()
+    messages = build_turn_context(
+        session,
+        turn,
+        system_prompt=compose_system_prompt(system_prompt, schemas),
+        notices=notices,
     )
     return LLMRequest(messages=tuple(messages), tools=tuple(schemas))
 
@@ -788,6 +815,7 @@ __all__ = [
     "OpenAICompatibleClient",
     "SUMMARY_SYSTEM_PROMPT",
     "build_model_request",
+    "build_turn_request",
     "compose_system_prompt",
     "load_env_file",
 ]
